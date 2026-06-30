@@ -1,0 +1,37 @@
+{
+  "commands": {
+    "play": { "name": "play", "description": "Play a song" },
+    "pause": { "name": "pause", "description": "Pause the current song" },
+    "resume": { "name": "resume", "description": "Resume the current song" },
+    "skip": { "name": "skip", "description": "Skip the current song" },
+    "stop": { "name": "stop", "description": "Stop the bot and leave voice channel" },
+    "volume": { "name": "volume", "description": "Change the volume" },
+    "loop": { "name": "loop", "description": "Toggle loop mode" },
+    "shuffle": { "name": "shuffle", "description": "Shuffle the queue" },
+    "queue": { "name": "queue", "description": "Show the queue" },
+    "now": { "name": "now", "description": "Show current song" },
+    "lyrics": { "name": "lyrics", "description": "Show song lyrics" },
+    "translate": { "name": "translate", "description": "Translate lyrics to Arabic" },
+    "lang": { "name": "lang", "description": "Change bot language" },
+    "help": { "name": "help", "description": "Show help" }
+  },
+  "messages": {
+    "joined": "✅ Joined **{channel}**",
+    "playing": "🎵 Now playing: **{title}**",
+    "paused": "⏸️ Paused",
+    "resumed": "▶️ Resumed",
+    "skipped": "⏭️ Skipped",
+    "stopped": "⏹️ Stopped",
+    "volume_set": "🔊 Volume set to {volume}%",
+    "loop_on": "🔁 Loop enabled",
+    "loop_off": "🔁 Loop disabled",
+    "shuffled": "🔀 Queue shuffled",
+    "queue_empty": "📭 Queue is empty",
+    "no_voice": "❌ You must be in a voice channel",
+    "no_song": "❌ No song is currently playing",
+    "lyrics_not_found": "❌ Lyrics not found for this song",
+    "lyrics_title": "📝 Lyrics for {title}",
+    "added_queue": "➕ Added to queue: **{title}**",
+    "lang_changed": "🌐 Language changed to English"
+  }
+}
