@@ -1,5 +1,5 @@
-import { Kazagumo, KazagumoPlayer, KazagumoTrack, Payload, Plugins } from 'kazagumo';
-import { NodeOption, Shoukaku } from 'shoukaku';
+import { Kazagumo, KazagumoPlayer, Payload } from 'kazagumo';
+import { Shoukaku, NodeOption } from 'shoukaku';
 import { Client } from 'discord.js';
 import { config } from './config';
 import { logger } from './logger';
@@ -14,6 +14,22 @@ const nodes: NodeOption[] = [
 ];
 
 export function createKazagumo(client: Client): Kazagumo {
+  const shoukaku = new Shoukaku(
+    { send: (guildId: string, payload: Payload) => {
+        const guild = client.guilds.cache.get(guildId);
+        if (guild) guild.shard.send(payload);
+      }
+    },
+    nodes,
+    {
+      moveOnDisconnect: false,
+      resumable: false,
+      resumableTimeout: 30,
+      reconnectTries: 2,
+      restTimeout: 10000,
+    }
+  );
+
   const kazagumo = new Kazagumo(
     {
       defaultSearchEngine: 'youtube',
@@ -22,19 +38,13 @@ export function createKazagumo(client: Client): Kazagumo {
         if (guild) guild.shard.send(payload);
       },
     },
-    new Shoukaku(client, nodes, {
-      moveOnDisconnect: false,
-      resumable: false,
-      resumableTimeout: 30,
-      reconnectTries: 2,
-      restTimeout: 10000,
-    })
+    shoukaku
   );
 
   kazagumo.shoukaku.on('ready', (name) => logger.info(`✅ Lavalink node ready: ${name}`));
   kazagumo.shoukaku.on('error', (name, error) => logger.error(`❌ Node error [${name}]: ${error.message}`));
   kazagumo.shoukaku.on('close', (name, code, reason) => logger.warn(`⚠️ Node closed [${name}]: ${code} ${reason}`));
-  kazagumo.shoukaku.on('disconnect', (name, moved) => logger.warn(`⚠️ Node disconnected [${name}]`));
+  kazagumo.shoukaku.on('disconnect', (name) => logger.warn(`⚠️ Node disconnected [${name}]`));
 
   kazagumo.on('playerStart', (player, track) => {
     logger.info(`🎵 Now playing: ${track.title} in guild ${player.guildId}`);

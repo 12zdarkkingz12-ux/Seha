@@ -7,7 +7,7 @@ import { initLyrics } from './lyrics';
 import { initTranslate } from './translate';
 import { initI18n } from './i18n';
 import { loadCommands, registerSlashCommands } from './commands';
-import { createSuccessEmbed, createErrorEmbed } from './embeds';
+import { createErrorEmbed } from './embeds';
 import { getLang } from './helpers';
 import { t } from './i18n';
 
@@ -22,30 +22,24 @@ export async function createBot(): Promise<BotClient> {
     partials: [Partials.Channel],
   }) as BotClient;
 
-  // إعداد Collections
   client.commands = new Collection();
   client.prefixCommands = new Collection();
   client.guildLanguages = new Collection();
 
-  // تهيئة الخدمات
   await initI18n();
   initLyrics();
   initTranslate();
 
-  // تهيئة Kazagumo بعد إنشاء الـ client
   client.kazagumo = createKazagumo(client);
 
-  // تحميل الأوامر
   loadCommands(client);
 
-  // حدث الاستعداد
   client.once('ready', async () => {
     logger.info(`✅ Bot ready: ${client.user?.tag}`);
     client.user?.setActivity('🎵 موسيقى تفهم لغتك', { type: 2 });
     await registerSlashCommands();
   });
 
-  // حدث Slash Commands
   client.on('interactionCreate', async (interaction) => {
     if (interaction.isChatInputCommand()) {
       const command = client.commands.get(interaction.commandName);
@@ -63,7 +57,6 @@ export async function createBot(): Promise<BotClient> {
       }
     }
 
-    // أزرار التحكم في Now Playing
     if (interaction.isButton()) {
       const btn = interaction as ButtonInteraction;
       const player = client.kazagumo.players.get(btn.guildId!);
@@ -76,33 +69,20 @@ export async function createBot(): Promise<BotClient> {
       await btn.deferUpdate();
 
       switch (btn.customId) {
-        case 'pause_resume':
-          player.pause(!player.paused);
-          break;
-        case 'skip':
-          await player.skip();
-          break;
-        case 'stop':
-          player.destroy();
-          break;
-        case 'loop':
-          player.setLoop(player.loop === 'track' ? 'none' : 'track' as any);
-          break;
-        case 'shuffle':
-          player.queue.shuffle();
-          break;
+        case 'pause_resume': player.pause(!player.paused); break;
+        case 'skip': await player.skip(); break;
+        case 'stop': player.destroy(); break;
+        case 'loop': player.setLoop(player.loop === 'track' ? 'none' : 'track' as any); break;
+        case 'shuffle': player.queue.shuffle(); break;
       }
     }
   });
 
-  // حدث Prefix Commands
   client.on('messageCreate', async (message) => {
     if (message.author.bot || !message.guild) return;
+    if (!message.content.startsWith(config.prefix)) return;
 
-    const prefix = config.prefix;
-    if (!message.content.startsWith(prefix)) return;
-
-    const args = message.content.slice(prefix.length).trim().split(/\s+/);
+    const args = message.content.slice(config.prefix.length).trim().split(/\s+/);
     const commandName = args.shift()?.toLowerCase();
     if (!commandName) return;
 
@@ -117,8 +97,12 @@ export async function createBot(): Promise<BotClient> {
     }
   });
 
-  // raw events لـ Shoukaku
-  client.on('raw', (packet) => client.kazagumo.shoukaku.emit('raw', packet));
+  // Shoukaku raw events
+  client.on('raw', (packet) => {
+    client.kazagumo.shoukaku.connections.forEach((connection) => {
+      connection.setStateUpdate(packet);
+    });
+  });
 
   return client;
 }
