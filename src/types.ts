@@ -1,4 +1,4 @@
-import { Client, Collection } from 'discord.js';
+import { Client, Collection, ChatInputCommandInteraction } from 'discord.js';
 import { Kazagumo } from 'kazagumo';
 
 export interface BotClient extends Client {
@@ -10,13 +10,13 @@ export interface BotClient extends Client {
 
 export interface SlashCommand {
   data: any;
-  execute: (interaction: any, client: BotClient) => Promise<void>;
+  execute: (interaction: ChatInputCommandInteraction, client: BotClient) => Promise<any>;
 }
 
 export interface PrefixCommand {
   name: string;
   aliases?: string[];
-  execute: (message: any, args: string[], client: BotClient) => Promise<void>;
+  execute: (message: any, args: string[], client: BotClient) => Promise<any>;
 }
 
 export interface LyricsResult {
@@ -29,13 +29,4 @@ export interface LyricsResult {
 export interface SyncedLine {
   time: number;
   text: string;
-}
-
-export interface LiveLyricsSession {
-  guildId: string;
-  messageId: string;
-  channelId: string;
-  synced: SyncedLine[];
-  startTime: number;
-  interval: NodeJS.Timeout;
 }

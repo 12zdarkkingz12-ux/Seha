@@ -1,6 +1,6 @@
 import {
   SlashCommandBuilder,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   GuildMember,
   ActionRowBuilder,
   ButtonBuilder,
@@ -18,7 +18,7 @@ export const playCommand: SlashCommand = {
     .setDescription('Play a song')
     .addStringOption(o => o.setName('query').setDescription('Song name or URL').setRequired(true)),
 
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     await interaction.deferReply();
     const lang = getLang(interaction.guildId!, client);
     const member = interaction.member as GuildMember;
@@ -28,7 +28,7 @@ export const playCommand: SlashCommand = {
       return interaction.editReply({ embeds: [createErrorEmbed(t('messages.no_voice', lang))] });
     }
 
-    const query = (interaction.options as any).getString('query', true);
+    const query = interaction.options.getString('query', true);
 
     try {
       const player = await getOrCreatePlayer(
@@ -65,45 +65,45 @@ export const playCommand: SlashCommand = {
 
 export const pauseCommand: SlashCommand = {
   data: new SlashCommandBuilder().setName('pause').setDescription('Pause the current song'),
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     const lang = getLang(interaction.guildId!, client);
     const player = client.kazagumo.players.get(interaction.guildId!);
     if (!player) return interaction.reply({ embeds: [createErrorEmbed(t('messages.no_song', lang))], ephemeral: true });
     player.pause(true);
-    await interaction.reply({ embeds: [createSuccessEmbed(t('messages.paused', lang))] });
+    return interaction.reply({ embeds: [createSuccessEmbed(t('messages.paused', lang))] });
   },
 };
 
 export const resumeCommand: SlashCommand = {
   data: new SlashCommandBuilder().setName('resume').setDescription('Resume the current song'),
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     const lang = getLang(interaction.guildId!, client);
     const player = client.kazagumo.players.get(interaction.guildId!);
     if (!player) return interaction.reply({ embeds: [createErrorEmbed(t('messages.no_song', lang))], ephemeral: true });
     player.pause(false);
-    await interaction.reply({ embeds: [createSuccessEmbed(t('messages.resumed', lang))] });
+    return interaction.reply({ embeds: [createSuccessEmbed(t('messages.resumed', lang))] });
   },
 };
 
 export const skipCommand: SlashCommand = {
   data: new SlashCommandBuilder().setName('skip').setDescription('Skip the current song'),
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     const lang = getLang(interaction.guildId!, client);
     const player = client.kazagumo.players.get(interaction.guildId!);
     if (!player) return interaction.reply({ embeds: [createErrorEmbed(t('messages.no_song', lang))], ephemeral: true });
     await player.skip();
-    await interaction.reply({ embeds: [createSuccessEmbed(t('messages.skipped', lang))] });
+    return interaction.reply({ embeds: [createSuccessEmbed(t('messages.skipped', lang))] });
   },
 };
 
 export const stopCommand: SlashCommand = {
   data: new SlashCommandBuilder().setName('stop').setDescription('Stop the bot'),
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     const lang = getLang(interaction.guildId!, client);
     const player = client.kazagumo.players.get(interaction.guildId!);
     if (!player) return interaction.reply({ embeds: [createErrorEmbed(t('messages.no_song', lang))], ephemeral: true });
     player.destroy();
-    await interaction.reply({ embeds: [createSuccessEmbed(t('messages.stopped', lang))] });
+    return interaction.reply({ embeds: [createSuccessEmbed(t('messages.stopped', lang))] });
   },
 };
 
@@ -112,54 +112,54 @@ export const volumeCommand: SlashCommand = {
     .setName('volume')
     .setDescription('Change volume')
     .addIntegerOption(o => o.setName('level').setDescription('0-100').setMinValue(0).setMaxValue(100).setRequired(true)),
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     const lang = getLang(interaction.guildId!, client);
     const player = client.kazagumo.players.get(interaction.guildId!);
     if (!player) return interaction.reply({ embeds: [createErrorEmbed(t('messages.no_song', lang))], ephemeral: true });
-    const level = (interaction.options as any).getInteger('level', true);
+    const level = interaction.options.getInteger('level', true);
     await player.setVolume(level);
-    await interaction.reply({ embeds: [createSuccessEmbed(t('messages.volume_set', lang, { volume: level }))] });
+    return interaction.reply({ embeds: [createSuccessEmbed(t('messages.volume_set', lang, { volume: level }))] });
   },
 };
 
 export const loopCommand: SlashCommand = {
   data: new SlashCommandBuilder().setName('loop').setDescription('Toggle loop'),
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     const lang = getLang(interaction.guildId!, client);
     const player = client.kazagumo.players.get(interaction.guildId!);
     if (!player) return interaction.reply({ embeds: [createErrorEmbed(t('messages.no_song', lang))], ephemeral: true });
     const loop = player.loop === 'track' ? 'none' : 'track';
     player.setLoop(loop as any);
     const msg = loop === 'track' ? t('messages.loop_on', lang) : t('messages.loop_off', lang);
-    await interaction.reply({ embeds: [createSuccessEmbed(msg)] });
+    return interaction.reply({ embeds: [createSuccessEmbed(msg)] });
   },
 };
 
 export const shuffleCommand: SlashCommand = {
   data: new SlashCommandBuilder().setName('shuffle').setDescription('Shuffle queue'),
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     const lang = getLang(interaction.guildId!, client);
     const player = client.kazagumo.players.get(interaction.guildId!);
     if (!player) return interaction.reply({ embeds: [createErrorEmbed(t('messages.no_song', lang))], ephemeral: true });
     player.queue.shuffle();
-    await interaction.reply({ embeds: [createSuccessEmbed(t('messages.shuffled', lang))] });
+    return interaction.reply({ embeds: [createSuccessEmbed(t('messages.shuffled', lang))] });
   },
 };
 
 export const queueCommand: SlashCommand = {
   data: new SlashCommandBuilder().setName('queue').setDescription('Show queue'),
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     const lang = getLang(interaction.guildId!, client);
     const player = client.kazagumo.players.get(interaction.guildId!);
     if (!player) return interaction.reply({ embeds: [createErrorEmbed(t('messages.queue_empty', lang))], ephemeral: true });
     const embed = createQueueEmbed([...player.queue], player.queue.current || null);
-    await interaction.reply({ embeds: [embed] });
+    return interaction.reply({ embeds: [embed] });
   },
 };
 
 export const nowCommand: SlashCommand = {
   data: new SlashCommandBuilder().setName('now').setDescription('Show current song'),
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     const lang = getLang(interaction.guildId!, client);
     const player = client.kazagumo.players.get(interaction.guildId!);
     if (!player?.queue.current) {
@@ -174,7 +174,8 @@ export const nowCommand: SlashCommand = {
       new ButtonBuilder().setCustomId('shuffle').setEmoji('🔀').setStyle(ButtonStyle.Secondary)
     );
 
-    const embed = createNowPlayingEmbed(player.queue.current, player.shoukakuPlayer?.position || 0);
-    await interaction.reply({ embeds: [embed], components: [row] });
+    const position = player.shoukaku?.position || 0;
+    const embed = createNowPlayingEmbed(player.queue.current, position);
+    return interaction.reply({ embeds: [embed], components: [row] });
   },
 };

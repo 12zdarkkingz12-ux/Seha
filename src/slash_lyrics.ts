@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, CommandInteraction, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { SlashCommand, BotClient } from './types';
 import { fetchLyrics, getCurrentLineIndex } from './lyrics';
 import { translateToArabic } from './translate';
@@ -13,12 +13,12 @@ export const lyricsCommand: SlashCommand = {
     .addStringOption(o => o.setName('song').setDescription('Song name (leave empty for current)').setRequired(false))
     .addBooleanOption(o => o.setName('translate').setDescription('Translate to Arabic').setRequired(false)),
 
-  async execute(interaction: CommandInteraction, client: BotClient) {
+  async execute(interaction: ChatInputCommandInteraction, client: BotClient) {
     await interaction.deferReply();
     const lang = getLang(interaction.guildId!, client);
 
-    const songOption = (interaction.options as any).getString('song');
-    const doTranslate = (interaction.options as any).getBoolean('translate') || false;
+    const songOption = interaction.options.getString('song');
+    const doTranslate = interaction.options.getBoolean('translate') || false;
 
     const player = client.kazagumo.players.get(interaction.guildId!);
     let query = songOption;
@@ -48,42 +48,46 @@ export const lyricsCommand: SlashCommand = {
       }
     }
 
-    // إذا فيه كلمات متزامنة والبوت شغال، حدد السطر الحالي
+    const position = player?.shoukaku?.position || 0;
     let currentLine = -1;
-    if (result.synced && player?.shoukakuPlayer?.position) {
-      currentLine = getCurrentLineIndex(result.synced, player.shoukakuPlayer.position);
+    if (result.synced && position) {
+      currentLine = getCurrentLineIndex(result.synced, position);
     }
 
     const embed = createLyricsEmbed(result.title, result.artist, lyricsText, currentLine, translated);
     await interaction.editReply({ embeds: [embed] });
 
-    // لو فيه كلمات متزامنة، ابدأ Live Lyrics
     if (result.synced && player && !doTranslate) {
       startLiveLyrics(interaction, result.synced, player, result.title, result.artist, client);
     }
   },
 };
 
-async function startLiveLyrics(interaction: any, synced: any[], player: any, title: string, artist: string, client: BotClient) {
+async function startLiveLyrics(
+  interaction: ChatInputCommandInteraction,
+  synced: any[],
+  player: any,
+  title: string,
+  artist: string,
+  client: BotClient
+) {
   const interval = setInterval(async () => {
     try {
-      const currentPlayer = client.kazagumo.players.get(interaction.guildId);
+      const currentPlayer = client.kazagumo.players.get(interaction.guildId!);
       if (!currentPlayer || !currentPlayer.playing) {
         clearInterval(interval);
         return;
       }
 
-      const pos = currentPlayer.shoukakuPlayer?.position || 0;
+      const pos = currentPlayer.shoukaku?.position || 0;
       const lineIdx = getCurrentLineIndex(synced, pos);
       const lyricsText = synced.map((l: any) => l.text).join('\n');
       const embed = createLyricsEmbed(title, artist, lyricsText, lineIdx);
-
       await interaction.editReply({ embeds: [embed] });
     } catch {
       clearInterval(interval);
     }
   }, 5000);
 
-  // أوقف بعد 10 دقائق لحماية الـ API
   setTimeout(() => clearInterval(interval), 600000);
 }

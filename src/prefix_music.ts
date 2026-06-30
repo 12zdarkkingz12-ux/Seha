@@ -148,7 +148,7 @@ export const prefixNow: PrefixCommand = {
     if (!player?.queue.current) {
       return message.reply({ embeds: [createErrorEmbed(t('messages.no_song', lang))] });
     }
-    const embed = createNowPlayingEmbed(player.queue.current, player.shoukakuPlayer?.position || 0);
+    const embed = createNowPlayingEmbed(player.queue.current, player.shoukaku?.position || 0);
     await message.reply({ embeds: [embed] });
   },
 };

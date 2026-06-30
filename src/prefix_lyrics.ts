@@ -24,8 +24,8 @@ export const prefixLyrics: PrefixCommand = {
     if (!result) return message.reply({ embeds: [createErrorEmbed(t('messages.lyrics_not_found', lang))] });
 
     let currentLine = -1;
-    if (result.synced && player?.shoukakuPlayer?.position) {
-      currentLine = getCurrentLineIndex(result.synced, player.shoukakuPlayer.position);
+    if (result.synced && player?.shoukaku?.position) {
+      currentLine = getCurrentLineIndex(result.synced, player.shoukaku.position);
     }
 
     const embed = createLyricsEmbed(result.title, result.artist, result.lyrics, currentLine);
