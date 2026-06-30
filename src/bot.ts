@@ -97,12 +97,5 @@ export async function createBot(): Promise<BotClient> {
     }
   });
 
-  // Shoukaku raw events
-  client.on('raw', (packet) => {
-    client.kazagumo.shoukaku.connections.forEach((connection) => {
-      connection.setStateUpdate(packet);
-    });
-  });
-
   return client;
 }
