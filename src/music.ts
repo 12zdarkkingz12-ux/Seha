@@ -1,5 +1,5 @@
 import { Kazagumo, KazagumoPlayer, Payload } from 'kazagumo';
-import { Shoukaku, NodeOption } from 'shoukaku';
+import { Connectors, NodeOption } from 'shoukaku';
 import { Client } from 'discord.js';
 import { config } from './config';
 import { logger } from './logger';
@@ -14,22 +14,6 @@ const nodes: NodeOption[] = [
 ];
 
 export function createKazagumo(client: Client): Kazagumo {
-  const shoukaku = new Shoukaku(
-    { send: (guildId: string, payload: Payload) => {
-        const guild = client.guilds.cache.get(guildId);
-        if (guild) guild.shard.send(payload);
-      }
-    },
-    nodes,
-    {
-      moveOnDisconnect: false,
-      resumable: false,
-      resumableTimeout: 30,
-      reconnectTries: 2,
-      restTimeout: 10000,
-    }
-  );
-
   const kazagumo = new Kazagumo(
     {
       defaultSearchEngine: 'youtube',
@@ -38,7 +22,15 @@ export function createKazagumo(client: Client): Kazagumo {
         if (guild) guild.shard.send(payload);
       },
     },
-    shoukaku
+    new Connectors.DiscordJS(client),
+    nodes,
+    {
+      moveOnDisconnect: false,
+      resume: false,
+      resumeTimeout: 30,
+      reconnectTries: 2,
+      restTimeout: 10000,
+    }
   );
 
   kazagumo.shoukaku.on('ready', (name) => logger.info(`✅ Lavalink node ready: ${name}`));
