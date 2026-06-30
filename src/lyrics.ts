@@ -1,13 +1,13 @@
-import Genius from 'genius-lyrics';
+import { Client as GeniusClient } from 'genius-lyrics';
 import { config } from './config';
 import { logger } from './logger';
 import { LyricsResult, SyncedLine } from './types';
 
-let geniusClient: Genius.Client | null = null;
+let geniusClient: GeniusClient | null = null;
 
 export function initLyrics(): void {
   if (config.geniusApiKey) {
-    geniusClient = new Genius.Client(config.geniusApiKey);
+    geniusClient = new GeniusClient(config.geniusApiKey);
     logger.info('✅ Genius API initialized');
   } else {
     logger.warn('⚠️ Genius API key missing, lyrics may be limited');
