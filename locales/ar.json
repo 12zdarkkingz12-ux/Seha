@@ -1,0 +1,37 @@
+{
+  "commands": {
+    "play": { "name": "شغل", "description": "تشغيل أغنية" },
+    "pause": { "name": "توقف", "description": "إيقاف مؤقت للأغنية" },
+    "resume": { "name": "استأنف", "description": "استئناف الأغنية" },
+    "skip": { "name": "تخطى", "description": "تخطي الأغنية الحالية" },
+    "stop": { "name": "أوقف", "description": "إيقاف البوت ومغادرة الروم" },
+    "volume": { "name": "صوت", "description": "تغيير مستوى الصوت" },
+    "loop": { "name": "كرر", "description": "تفعيل أو تعطيل التكرار" },
+    "shuffle": { "name": "اخلط", "description": "خلط قائمة الانتظار" },
+    "queue": { "name": "قائمة", "description": "عرض قائمة الانتظار" },
+    "now": { "name": "الحالي", "description": "عرض الأغنية الحالية" },
+    "lyrics": { "name": "كلمات", "description": "عرض كلمات الأغنية" },
+    "translate": { "name": "ترجم", "description": "ترجمة الكلمات للعربية" },
+    "lang": { "name": "لغة", "description": "تغيير لغة البوت" },
+    "help": { "name": "مساعدة", "description": "عرض قائمة الأوامر" }
+  },
+  "messages": {
+    "joined": "✅ انضممت إلى **{channel}**",
+    "playing": "🎵 الآن يُشغل: **{title}**",
+    "paused": "⏸️ تم الإيقاف المؤقت",
+    "resumed": "▶️ تم الاستئناف",
+    "skipped": "⏭️ تم التخطي",
+    "stopped": "⏹️ تم الإيقاف",
+    "volume_set": "🔊 تم ضبط الصوت على {volume}%",
+    "loop_on": "🔁 تم تفعيل التكرار",
+    "loop_off": "🔁 تم تعطيل التكرار",
+    "shuffled": "🔀 تم خلط القائمة",
+    "queue_empty": "📭 قائمة الانتظار فارغة",
+    "no_voice": "❌ يجب أن تكون في روم صوتي",
+    "no_song": "❌ لا توجد أغنية تُشغل حالياً",
+    "lyrics_not_found": "❌ لم يتم العثور على كلمات هذه الأغنية",
+    "lyrics_title": "📝 كلمات {title}",
+    "added_queue": "➕ تمت إضافة: **{title}** إلى القائمة",
+    "lang_changed": "🌐 تم تغيير اللغة إلى العربية"
+  }
+}
