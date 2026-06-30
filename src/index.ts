@@ -1,9 +1,12 @@
 import { createBot } from './bot';
 import { config } from './config';
 import { logger } from './logger';
+import { startHealthServer } from './health';
 
 async function main() {
   logger.info('🚀 Starting Seha Bot...');
+
+  startHealthServer();
 
   if (!config.token) {
     logger.error('❌ DISCORD_TOKEN is missing in .env');
