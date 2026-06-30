@@ -1,0 +1,26 @@
+services:
+  - type: worker
+    name: seha
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: CLIENT_ID
+        sync: false
+      - key: LAVALINK_HOST
+        sync: false
+      - key: LAVALINK_PORT
+        value: "443"
+      - key: LAVALINK_PASSWORD
+        sync: false
+      - key: LAVALINK_SECURE
+        value: "true"
+      - key: GENIUS_API_KEY
+        sync: false
+      - key: LIBRETRANSLATE_URL
+        sync: false
+      - key: NODE_VERSION
+        value: "20.18.0"

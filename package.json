@@ -1,0 +1,26 @@
+{
+  "name": "seha",
+  "version": "1.0.0",
+  "description": "Seha - Smart Discord Music Bot with Live Lyrics & Translation",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "discord.js": "^14.18.0",
+    "shoukaku": "^4.0.1",
+    "kazagumo": "^3.0.0",
+    "genius-lyrics": "^4.3.0",
+    "i18next": "^23.0.0",
+    "i18next-fs-backend": "^2.3.0",
+    "dotenv": "^16.4.7",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "typescript": "^5.7.0",
+    "ts-node": "^10.9.2"
+  }
+}
