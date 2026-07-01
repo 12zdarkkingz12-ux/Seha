@@ -38,7 +38,9 @@ export const playCommand: SlashCommand = {
         interaction.channelId
       );
 
-      const result = await client.kazagumo.search(query, { requester: interaction.user.tag });
+      const result = await client.kazagumo.search(query, {
+        requester: { id: interaction.user.id, tag: interaction.user.tag },
+      });
 
       if (!result.tracks.length) {
         return interaction.editReply({ embeds: [createErrorEmbed('❌ No results found')] });

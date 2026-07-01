@@ -18,7 +18,7 @@ export function createNowPlayingEmbed(track: KazagumoTrack, position: number = 0
       { name: 'التقدم', value: bar, inline: true }
     )
     .setThumbnail(track.thumbnail || null)
-    .setFooter({ text: `طلب من: ${track.requester as string || 'Unknown'}` });
+    .setFooter({ text: `طلب من: ${(track.requester as { tag?: string })?.tag || 'Unknown'}` });
 }
 
 export function createQueueEmbed(tracks: KazagumoTrack[], currentTrack: KazagumoTrack | null): EmbedBuilder {

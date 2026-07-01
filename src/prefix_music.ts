@@ -18,7 +18,9 @@ export const prefixPlay: PrefixCommand = {
 
     try {
       const player = await getOrCreatePlayer(client.kazagumo, message.guildId!, voiceChannel.id, message.channelId);
-      const result = await client.kazagumo.search(query, { requester: message.author.tag });
+      const result = await client.kazagumo.search(query, {
+        requester: { id: message.author.id, tag: message.author.tag },
+      });
 
       if (!result.tracks.length) return message.reply({ embeds: [createErrorEmbed('❌ لا نتائج')] });
 
